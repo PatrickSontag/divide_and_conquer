@@ -1,59 +1,61 @@
 function sortedFrequency(arr, target) {
     // sortedFrequency([1,1,2,2,2,2,3],2) // 4
-    let leftIndex = 0;
-    let rightIndex = arr.length - 1;
-    let middleIndex;
-    let targetLeftIndex;
-    let targetRightIndex;
+    let targetLeftIndex = findTargetLeft(arr, target);
+    let targetRightIndex = findTargetRight(arr, target);
+    return countTarget(targetRightIndex, targetLeftIndex);
 
-    function updateMiddleIndex() {
-        middleIndex = Math.floor((leftIndex + rightIndex) / 2);
-    }
+}
+
+function updateMiddleIndex(left, right) {
+    return Math.floor((left + right) / 2);
+}
+
+function findTargetLeft(arr, target) {
+    let leftIndex = 0;
+    let rightIndex = arr.length -1;
+    let middleIndex = Math.floor((leftIndex + rightIndex) / 2);
 
     for (i of arr) {
-
-        if (targetLeftIndex && targetRightIndex) {
-            return `ANSWER: ${targetRightIndex - targetLeftIndex + 1} instances of ${target}`;
+        middleIndex = updateMiddleIndex(leftIndex, rightIndex);
+        console.log("L: leftIndex", leftIndex, "middleIndex", middleIndex, "rightIndex", rightIndex);
+        if (arr[middleIndex] === target && arr[middleIndex - 1] !== target) {
+            console.log("LEFT:", middleIndex);
+            return middleIndex;
         }
-
-        updateMiddleIndex();
-        console.log("left", leftIndex, "middle", middleIndex, "right", rightIndex);
-
-        if (!targetLeftIndex && (arr[middleIndex] === target && arr[middleIndex - 1] !== target)) {
-            console.log("arr[middleIndex]", arr[middleIndex], "arr[middleIndex - 1]", arr[middleIndex - 1])
-            targetLeftIndex = middleIndex;
+        else if (arr[middleIndex] < target) {
             leftIndex = middleIndex;
-            rightIndex = arr.length - 1;
-            console.log("FOUND targetLeftIndex", targetLeftIndex);
-        }
-        if (!targetRightIndex && (arr[middleIndex] === target && arr[middleIndex + 1] !== target)) {
-            console.log("arr[middleIndex", arr[middleIndex], "arr[middleIndex - 1", arr[middleIndex - 1])
-            targetRightIndex = middleIndex;
-            rightIndex = middleIndex;
-            leftIndex = 0;
-            console.log("FOUND targetRightIndex", targetRightIndex);
-        }
-
-
-        if (arr[middleIndex] < target) {
-            console.log("middle less than target")
-            leftIndex = middleIndex + 1;
-        }
-        else if (arr[middleIndex] > target) {
-            console.log("middle greater than target")
-            rightIndex = middleIndex - 1;
         }
         else {
-            if (targetLeftIndex) {
-                leftIndex = middleIndex;
-                console.log("looking for targetRightIndex");
-            }
-            else {
-                rightIndex = middleIndex;
-                console.log("looking for targetLeftIndex");
-            }
+            rightIndex = middleIndex;
         }
     }
+}
+
+function findTargetRight(arr, target) {
+    let leftIndex = 0;
+    let rightIndex = arr.length -1;
+    let middleIndex = updateMiddleIndex(leftIndex, rightIndex);
+
+
+    for (i of arr) {
+        middleIndex = updateMiddleIndex(leftIndex, rightIndex);
+        console.log("R: leftIndex", leftIndex, "middleIndex", middleIndex, "rightIndex", rightIndex);
+
+        if (arr[middleIndex] === target && arr[middleIndex + 1] !== target) {
+            console.log("RIGHT:", middleIndex);
+            return middleIndex;
+        }
+        else if (arr[middleIndex] > target) {
+            rightIndex = middleIndex;
+        }
+        else {
+            leftIndex = middleIndex;
+        }
+    }
+}
+
+function countTarget(right, left) {
+    return right - left + 1;
 }
 
 module.exports = sortedFrequency
